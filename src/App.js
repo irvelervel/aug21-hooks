@@ -1,8 +1,9 @@
-import { useState, useDebugValue } from 'react'
+import { useState, useEffect, useDebugValue } from 'react'
 import Button from 'react-bootstrap/Button'
 import './App.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
+// CUSTOM HOOK FOR ASSIGNING A HOOK NAME IN THE DEVTOOLS
 function useStateWithLabel(initialValue, name) {
   const [value, setValue] = useState(initialValue)
   useDebugValue(`${name}: ${value}`)
@@ -43,6 +44,8 @@ const App = () => {
       ...stateObject,
       name: 'Stefano',
     })
+    // setCount REPLACES the existing value of count
+    // while setState MERGES whatever you pass to it into the state
   }
 
   const [firstName, setFirstName] = useStateWithLabel('Mario', 'firstName')
@@ -65,17 +68,50 @@ const App = () => {
     setCounter(counter - 1)
   }
 
-  this.setState(
-    {
-      name: 'Emilian',
-    },
-    () => {
-      // this is a callback function you can write
-      // you are GUARANTEED that this callback will run AFTER the setState
-      console.log(this.state.name)
+  // this.setState(
+  //   {
+  //     name: 'Emilian',
+  //   },
+  //   () => {
+  //     // this is a callback function you can write
+  //     // you are GUARANTEED that this callback will run AFTER the setState
+  //     console.log(this.state.name)
+  //   }
+  // )
+  // console.log(this.state.name)
+
+  // THIS USEEFFECT IS A REPLACEMENT FOR COMPONENT DID UPDATE
+  useEffect(() => {
+    // the code you want to execute!
+    console.log('re-rendered!')
+    // this useEffect will invoke itself again every time there's a change in the STATE or in the PROPS
+    // do not set the state, infinite loop just like componentDidUpdate with no handbrake!!
+    // setName('Matiss')
+  })
+
+  // THIS IS ANOTHER COMPONENT DID UPDATE BUT JUST LISTENING FOR A COUNTER CHANGE
+  useEffect(() => {
+    console.log('You updated the counter!')
+  }, [counter])
+
+  // EQUIVALENT IN CLASS COMPONENT
+  // componentDidUpdate = (prevProps) => {
+  //   if(prevProps.counter !== this.props.counter) {
+  //     console.log('You updated the counter!')
+  //   }
+  // }
+
+  useEffect(() => {
+    // this is a COMPONENTDIDMOUNT
+    console.log('this is pretty much a componentDidMount!')
+  }, [])
+
+  // this is a COMPONENTWILLUNMOUNT
+  useEffect(() => {
+    return () => {
+      console.log("bye bye from n'sync")
     }
-  )
-  console.log(this.state.name)
+  }, [])
 
   return (
     <div className="App">
